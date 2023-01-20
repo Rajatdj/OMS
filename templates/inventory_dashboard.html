@@ -1,0 +1,1013 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Inventory{% endblock %}
+{% block content %}
+    <div>
+    
+        <div class="item-master">
+            <div class="container-fluid">
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                        <div class="d-md-flex justify-content-between inventory">
+                            <div class="d-flex">
+                                <i class="fa fa-archive" aria-hidden="true"></i>
+                                <span class="ps-2">
+                                    <h6 class="m-0">Inventory</h6>
+                                    <p class="m-0">Item master</p>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="item-table bg-white">
+                            <div class="table-heading d-md-flex justify-content-between p-3">
+                                <div class="heading-name mb-md-0 mb-3 d-flex">
+                                    
+                                    <div class="input-group">
+                                        <form method="GET" id="search-scan-form">
+                                            <div class="d-flex">
+                                                <span class="input-group-text" id="basic-addon3">Scan And Search</span>
+                                        
+                                            <input type="text" class="form-control" name="search_by_id" aria-describedby="basic-addon3" id="scanAdnSearch">
+                                            </div>
+                                            
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <div class="heading-button">
+                                    <button type="button" class="btn-add" data-bs-toggle="modal"
+                                        data-bs-target="#openmodalmaster">+Add single items</button>
+                                       
+                                    <div class="modal fade" id="openmodalmaster" >
+                                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                                            <div class="modal-content">
+
+                                                <!-- Modal Header -->
+
+                                                <div class="sub-heading shadow mb-4 rounded text-center encrypted_header">
+                                                    Add Item
+                                                </div>
+                                                
+                                                <!-- Modal body -->
+                                                <div class="modal-body">
+                                                    <p style="color:red;" id="error_message"></p>
+                                                    <form action="" method="POST" class="add-new-item"  id="add-new-item" >
+                                                        {% csrf_token %}
+                                                        <div class="row">
+                                                            <div class="col-6">
+                                                                <div class="py-3">
+                                                                    <label for="item" class="label-blue">Item Id</label>
+                                                                    <input type="text" class="form-control add_single_field" name="item_sku" id="item_sku" required>
+                                                                </div>
+                                                                <div class="py-3">
+                                                                    <label for="ProductService"
+                                                                        class="label-blue">Product/Service</label>
+                                                                    <select class="form-select add_single_field" name="service_product" id="service_product" required>
+                                                                        <option selected>Select Type</option>
+                                                                        {% for type, value in product_services %}
+                                                                        <option value="{{type}}">{{ value }}</option>
+                                                                       {% endfor %}
+                                                                    </select>
+                                                                   
+                                                                </div>
+                                                                <div class="py-3">
+                                                                    <label for="unit" class="label-blue">Unit Of
+                                                                        Measurement</label>
+                                                                    <select class="form-select add_single_field" id="unit" name="unit" required>
+                                                                        <option selected>Select Unit</option>
+                                                                        {% for type, unit in units %}
+                                                                        <option value="{{type}}">{{unit}}</option>
+                                                                        {% endfor %}
+                                                                    </select>
+                                                                </div>
+                                                                <div class="py-3">
+                                                                    <label for="stock" class="label-blue">Current
+                                                                        Stock</label>
+                                                                    <input type="text" name="stock" id="stock" class="form-control add_single_field" required>
+                                                                </div>                                                                
+
+                                                                <div class="py-3">
+                                                                    <label for="code" class="label-blue">HSN Code</label>
+                                                                    <input type="text" name="hsn_code" id="hsn_code" class="form-control add_single_field" required>
+                                                                </div>
+                                                                <div class="py-3">
+                                                                    <label for="code" class="label-blue">Warehouse</label>
+                                                                    <select class="form-select add_single_field" id="check_ware_house" name="ware_house" required>
+                                                                        <option value="-">-</option>
+                                                                    {% for warehouse in warehouses %}
+                                                                        <option value="{{warehouse.name}}">{{warehouse.name}}</option>
+                                                                    {% endfor %}
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-6">
+                                                                <div class="py-3">
+                                                                    <label for="Iname" class="label-blue">Item name</label>
+                                                                    <input type="text" id="item_name" name="item_name" class="form-control add_single_field" required>
+                                                                </div>
+                                                                <div class="py-3">
+                                                                    <label for="buy"
+                                                                        class="label-blue">Buy/Sell/Both</label>
+                                                                    <select class="form-select add_single_field" id="item_type" name="item_type" required>
+                                                                            {% for type, value in item_types %}
+                                                                                <option value="{{type}}">{{value}}</option>
+                                                                            {% endfor %}
+                                                                    </select>
+                                                                </div>
+                                                                <div class="py-3">
+                                                                    <label for="itemCategory" class="label-blue">Item
+                                                                        category</label>
+                                                                    <select class="form-select add_single_field add-new-cat" id="category"name="category">
+                                                                        <option>-------</option>
+                                                                      <option class="add-new-category" value="/inventory/add-category">Add Category</option>
+                                                                        {% for category in categories %}
+                                                                            <option value="{{category.id}}">{{category.name}}</option>
+                                                                        {% endfor %}
+                                                                    </select>
+                                                                </div>
+                                                                <div class="py-3">
+                                                                    <label for="Price" class="label-blue">Price</label>
+                                                                    <input type="text" name="item_price" id="item_price" class="form-control add_single_field" required>
+                                                                </div>
+                                                                <div class="py-3">
+                                                                    <label for="tax" class="label-blue">Tax</label>
+                                                                    <input type="text" name="tax" id="tax" class="form-control add_single_field" required>
+                                                                </div>
+                                                                <div class="py-3">
+                                                                    <label for="rack" class="label-blue">Rack</label>
+                                                                    <select class="form-select add_single_field add-racks" id="add-racks" name="add-racks">
+                                                                        <option value="-">-</option>
+                                                                       
+                                                                    </select>
+                                                                </div>
+                                                             
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <a href="{% url 'add-single-inventory-item'%}"><button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button></a>
+                                                            <input type="submit" name  ="btn-submit" id="btn-submit"value="Save"class="btn btn-success">
+                                                            
+                                                        </div>
+                                                  <p>{% if message %}{{message}}{% endif %}</p>
+                                                </form>
+                                                        
+                                                </div>
+                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="invent_table">
+                            <div class="table-responsive">
+                               
+                                <table class="table table-bordered ">
+                                    <thead class="table-heading-blue">
+                                        <tr>
+                                            <th>Item id #</th>
+                                            <th>Item name</th>
+                                            <th>Item category</th>
+                                            <th style="width: 150px; min-width: 150px;">Current Stock</th>
+                                            <th style="width: 150px; min-width: 150px;">Unit</th>
+                                            <th style="width: 150px; min-width: 150px;">Price</th>
+                                            <th>Stock status</th>
+                                            <th>Product/Service</th>
+                                            <th>Type</th>
+                                            <th>HSN Code </th>
+                                            <th>Tax </th>
+                                            <th>Warehouse </th>
+                                            <th style="width: 150px; min-width: 150px;" >Action</th>
+                                            <th style="width: 150px; min-width: 150px;" >Show Barcode</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tr class="search">
+                                        <form method="GET" id="search-form">
+                                            <td><input type="text" class="search-item" name="search_by_id" placeholder="Search..."> </td>
+                                            <td><input type="text" class="search-item" name="search_by_name" placeholder="Search..."> </td>
+                                            <td><input type="text"class="search-item"  name="search_by_category" placeholder="Search..."> </td>
+                                        
+                                        
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td><input type="text" class="search-item" name="search_by_type" placeholder="Search..."> </td>
+                                        <td><input type="text" class="search-item" name="search_by_hsncode" placeholder="Search..."> </td>
+                                        <td></td>
+                                        <td></td>
+                                       
+                                    </form>
+
+
+                                    </tr>
+                                    <tbody class="table-data-purple">
+                                        <tr>
+                                            {% for item in items %}
+                                            <tr>
+                                                <td>{{item.sku}}</td>
+                                                <td class="d-flex justify-content-between text-primary">{{ item.item_name }}
+                                                </td>
+                                                <td>{{ item.item_category}}</td>
+                                                <td class="text-end text-primary stock-td">{{item.stock}}</td>
+                                                <td>{{ item.unit_of_measurement }}</td>
+                                                <td><i class="fa fa-inr" aria-hidden="true"></i>
+                                                    {{ item.price }}</td>
+                                                <td>Min limit missing</td>
+                                                <td>{{ item.product_or_service }}</td>
+                                                <td>{{ item.type }}</td>
+                                                <td>{{ item.hsn_code }}</td>
+                                                <td>{{ item.tax }}</td>
+                                                <td>{{ item.warehouse}}</td>
+                                                <td><a href="{% url 'edit-inventory-item' item.id %}" class="me-2"><i class="fas fa-pencil-alt"></i></a><i class="fa-solid fa-trash fa-fw item-delete text-danger" data-bs-toggle="modal"
+                                                    data-bs-target="#openmodaldelete" data-delete-item-id="{{ item.id }}"></i><input type="hidden" class="delete-itemid" value="{{item.id}}"></td>
+                                                <td> <button data-bs-toggle="modal" data-item-barcode="{{ item.barcode.url }}"data-bs-target="#openbarcode" class="open_barcode btn-add px-1" >Show Barcode</button></td>                            
+                                            </tr>
+                                            {% endfor %}
+                                        </tr>
+                                    
+                                    </tbody>
+                                </table>
+                                <!-- Modal to delete item  -->
+                                <div class="modal fade" id="openmodaldelete">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header bg-danger modal_header_del">
+                                                <h5 class="m-0">Delete Entry</h5>
+                                                <button type="button" class="modal_close_btn btn p-0" data-bs-dismiss="modal">&times;</button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form class="delete_item_form" method="post">
+                                                    {% csrf_token %}
+                                                    <div class="d-flex align-items-center mb-5 mt-3">
+                                                        <img src="{% static '/img/warning_icon.gif' %}">
+                                                        <h4 class="ms-3">Are you sure you want to delete?</h4>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-danger btn-md">Confirm delete</button>
+                                                    <a href="{% url 'add-single-inventory-item' %}"><button type="button" class="btn btn-default" data-bs-dismiss="modal">Cancel</button></a>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Modal to show barcode of the item -->
+                                <div class="modal fade" id="openbarcode">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header modal_header_del bg-primary">
+                                                <h5 class="m-0">Barcode</h5>
+                                                <button type="button" class="modal_close_btn btn p-0" data-bs-dismiss="modal">&times;</button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <img class="barcode-img-url" src="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="table_pagination">
+                                <div class="d-flex justify-content-between align-items-center pt-3">
+                                    <p class="pagisition-para mb-0">1-2 of 2</p>
+                                    <div class="">
+                                        <button class="btn btn-primary px-0 py-1" disabled><i class="fas fa-chevron-left mx-2"></i></button>
+                                        <button class="btn btn-primary px-0 py-1"><i class="fas fa-chevron-right mx-2"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                        <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                            <div class="d-flex justify-content-between inventory">
+                                <div class="d-flex">
+                                    <i class="fa fa-archive" aria-hidden="true"></i>
+                                    <span class="ps-2">
+                                        <h6 class="m-0">inventory</h6>
+                                        <p class="m-0">Inventory Approvals</p>
+                                    </span>
+                                </div>
+                                <div class="dropdown">
+                                    <a class=" nav-link  dropdown-toggle text-success" type="button" id="dropdownMenuButton1"
+                                        data-bs-toggle="dropdown" aria-expanded="false"> Bulk action</a>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                        <li><a class="dropdown-item" href="#">Action</a></li>
+                                        <li><a class="dropdown-item" href="#">Another action</a></li>
+                                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="item-table bg-white">
+                                <div class="table-heading d-flex justify-content-between">
+                                    <div class="heading-name">
+                                        <button type="button" class="filter-btn">filters <i class="fa fa-filter"
+                                                aria-hidden="true"></i>
+                                        </button>
+                                        <span>Showing result for:
+                                            <button type="button" class="result-btn">category product</button>
+                                            <button type="button" class="result-btn">Status:all</button>
+                                        </span>
+                                    </div>
+        
+                                    <div class="heading-button">
+                                        <button type="button" class="btn-add btn btn-danger" data-bs-toggle="modal"
+                                            data-bs-target="#openmodal">Reject</button>
+                                        <button type="button" class="btn-add btn btn-secondary " data-bs-toggle="modal"
+                                            data-bs-target="#openmodal">Approve</button>
+                                        <div class="modal fade" id="openmodal">
+                                            <div class="modal-dialog modal-dialog-centered modal-lg">
+                                                <div class="modal-content">
+                                                                    <!-- Modal Header -->
+                                                                    <div class="modal-header bg-warning">
+                                                                        <h4 class="modal-title">Add item</h4>
+                                                                        <button type="button" class="btn btn-secondary">+ Add fields</button>
+                                                                    </div>
+                                                                    <div class=" sub-heading shadow p-2 mb-5 bg-white rounded text-center">
+                                                                        <i class="fa fa-shield" aria-hidden="true"></i>
+                                                                        encrypted action
+                                                                    </div>
+                                                    <!-- Modal body -->
+                                                    <div class="modal-body">
+                                                        <form>
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <div class="py-md-3 pt-0 pb-2">
+                                                                        <label for="item" class="label-blue">item id</label>
+                                                                        <select class="form-select">
+                                                                            <option selected>SKU00007</option>
+                                                                            <option value="1">One</option>
+                                                                            <option value="2">Two</option>
+                                                                            <option value="3">Three</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="py-md-3 pt-0 pb-2">
+                                                                        <label for="ProductService"
+                                                                            class="label-blue">product/service</label>
+                                                                        <select class="form-select">
+                                                                            <option selected>Product</option>
+                                                                            <option value="1">One</option>
+                                                                            <option value="2">Two</option>
+                                                                            <option value="3">Three</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="py-md-3 pt-0 pb-2">
+                                                                        <label for="unit" class="label-blue">unit of
+                                                                            measurement</label>
+                                                                        <select class="form-select">
+                                                                            <option selected></option>
+                                                                            
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="py-md-3 pt-0 pb-2">
+                                                                        <label for="stock" class="label-blue">current
+                                                                            stock</label>
+                                                                        <input type="text" class="form-control">
+                                                                    </div>
+                                                                    <div class="py-md-3 pt-0 pb-2">
+                                                                        <label for="code" class="label-blue">HSN Code</label>
+                                                                        <input type="text" class="form-control">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="py-md-3 pt-0 pb-2">
+                                                                        <label for="Iname" class="label-blue">Item name</label>
+                                                                        <input type="text" class="form-control">
+                                                                    </div>
+                                                                    <div class="py-md-3 pt-0 pb-2">
+                                                                        <label for="buy"
+                                                                            class="label-blue">Buy/Sell/Both</label>
+                                                                        <select class="form-select">
+                                                                            <option selected>Both</option>
+                                                                            <option value="1">sell</option>
+                                                                            <option value="2">buy</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="py-md-3 pt-0 pb-2">
+                                                                        <label for="itemCategory" class="label-blue">Item
+                                                                            category</label>
+                                                                        <select class="form-select">
+                                                                            <option selected></option>
+                                                                            <option value="1">1</option>
+                                                                            <option value="2">2</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="py-md-3 pt-0 pb-2">
+                                                                        <label for="Price" class="label-blue">Price</label>
+                                                                        <input type="text" class="form-control">
+                                                                    </div>
+                                                                    <div class="py-md-3 pt-0 pb-2">
+                                                                        <label for="tax" class="label-blue">tax</label>
+                                                                        <select class="form-select">
+                                                                            <option selected></option>
+                                                                            <option value="1">1</option>
+                                                                            <option value="2">2</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-success">Save</button>
+                                                        <button type="button" class="btn btn-success">Save & Add New</button>
+        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-bordered ">
+                                    <thead class="table-heading-blue">
+                                        <tr>
+                                            <th>Item id #</th>
+                                            <th>Item name</th>
+                                            <th>Item category</th>
+                                            <th style="width: 150px; min-width: 150px;">Current Stock</th>
+                                            <th style="width: 150px; min-width: 150px;">Unit</th>
+                                            <th style="width: 150px; min-width: 150px;">Price</th>
+                                            <th>Stock status</th>
+                                            <th>Product/Service</th>
+                                            <th>Type</th>
+                                            <th>HSN Code </th>
+                                            <th>Tax </th>
+                                            <th style="width: 150px; min-width: 150px;" ></th>
+                                            <th style="width: 150px; min-width: 150px;" >Max Stock Level</th>
+                                            <th style="width: 150px; min-width: 150px;" >Drawing Number</th>
+                                            <th style="width: 150px; min-width: 150px;" >Counter-party Code</th>
+        
+                                        </tr>
+                                    </thead>
+                                    <tr class="search">
+                                        <td><input type="text" placeholder="Search..."> </td>
+                                        <td><input type="text" placeholder="Search..."> </td>
+                                        <td><input type="text" placeholder="Search..."> </td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td><input type="text" placeholder="Search..."> </td>
+                                        <td></td>
+                                        <td><input type="text" placeholder="Search..."> </td>
+                                        <td><input type="text" placeholder="Search..."> </td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td><input type="text" placeholder="Search..."> </td>
+                                        <td><input type="text" placeholder="Search..."> </td>
+        
+        
+        
+                                    </tr>
+                                    <tbody class="table-data-purple">
+                                        {% for item in items %}
+                                        <tr>
+                                            <td>{{item.sku}}</td>
+                                            <td class="d-flex justify-content-between text-primary">{{ item.item_name }}<i
+                                                    class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                                            </td>
+                                             <td>{{ item.item_category}}</td>
+                                            <td class="text-end text-primary">100 <i class="fa fa-pencil" aria-hidden="true"></i>
+                                            </td>
+                                            <td>{{ item.unit_of_measurement }}</td>
+                                            <td><i class="fa fa-inr" aria-hidden="true"></i>
+                                                {{ item.stock }}</td>
+                                            <td>Min limit missing</td>
+                                            <td>{{ item.product_or_service }}</td>
+                                            <td>{{ item.type }}</td>
+                                            <td>{{ item.hsn_code }}</td>
+                                            <td>{{ item.hsn_code }}</td>
+                                            <td style="text-align: right;">{{ item.tax }}</td>
+                                            <td style="text-align: right;">-</td>
+                                            <td>-</td>
+                                            <td>-</td>
+        
+                                        </tr>
+                                        {% endfor %}
+                                        
+                                    </tbody>
+                                </table>
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-md-7"></div>
+                                        <div class="col-md-5">
+                                            <div class="row">
+                                                <div class="col-md-7">
+                                                    <div class="">
+                                                        <div class="d-flex align-items-baseline">
+                                                            <p class="pagisition-para">Rows per page:</p>
+                                                            <div class="fooet-pagination mx-4">
+                                                                <p class="">50</p>
+                                                                <div class="dropdown">
+                                                                    <button class=" dropdown-toggle dropdown-btn" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                    </button>
+                                                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                                                                        <li><button class="dropdown-item" type="button">1</button></li>
+                                                                        <li><button class="dropdown-item" type="button">2</button></li>
+                                                                        <li><button class="dropdown-item" type="button">3</button></li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-5">
+                                                    <div class="">
+                                                        <p class="pagisition-para">1-2 of 2</p>
+                                                        <div class="d-flex align-items-baseline">
+                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="nav-barcode" role="tabpanel" aria-labelledby="nav-contact-tab">
+                        <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                            <div class="d-flex justify-content-between inventory">
+                                <div class="d-flex">
+                                    <i class="fa fa-archive" aria-hidden="true"></i>
+                                    <span class="ps-2">
+                                        <h6 class="m-0">inventory</h6>
+                                        <p class="m-0">Bar Codes</p>
+                                    </span>
+                                </div>
+                                <div class="dropdown">
+                                    <a class=" nav-link  dropdown-toggle text-success" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false"> Bulk action</a>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                        <li><a class="dropdown-item" href="#">Action</a></li>
+                                        <li><a class="dropdown-item" href="#">Another action</a></li>
+                                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="item-table bg-white">
+                                <div class="table-heading d-flex justify-content-between">
+                                    <div class="heading-name">
+                                        <button type="button" class="filter-btn">filters <i class="fa fa-filter"
+                                                aria-hidden="true"></i>
+                                        </button>
+                                        <span>Showing result for:
+                                            <button type="button" class="badge rounded-pill result-btn">category product</button>
+                                            <button type="button" class="badge rounded-pill result-btn">Status:all</button>
+                                        </span>
+                                    </div>
+        
+                                    <div class="heading-button">
+                                        <button type="button" class="btn-add" data-bs-toggle="modal"
+                                            data-bs-target="#openmodal">+Add single items</button>
+                                        <div class="modal" id="openmodal">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+        
+                                                    <!-- Modal Header -->
+                                                    <div class="modal-header bg-warning">
+                                                        <h4 class="modal-title">Add item</h4>
+                                                        <button type="button" class="btn btn-secondary">+ Add fields</button>
+                                                    </div>
+                                                    <div class=" sub-heading shadow p-2 mb-5 bg-white rounded text-center">
+                                                        <i class="fa fa-shield" aria-hidden="true"></i>
+                                                        encrypted action
+                                                    </div>
+                                                    <!-- Modal body -->
+                                                    <div class="modal-body">
+                                                        <form>
+                                                            <div class="row">
+                                                                <div class="col-6">
+                                                                    <div class="py-3">
+                                                                        <label for="item" class="label-blue">item id</label>
+                                                                        <select class="form-select">
+                                                                            <option selected>SKU00007</option>
+                                                                            <option value="1">One</option>
+                                                                            <option value="2">Two</option>
+                                                                            <option value="3">Three</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="py-3">
+                                                                        <label for="ProductService"
+                                                                            class="label-blue">product/service</label>
+                                                                        <select class="form-select">
+                                                                            <option selected>Product</option>
+                                                                            <option value="1">Service</option>
+                                                                            <option value="2">Two</option>
+                                                                            <option value="3">Three</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="py-3">
+                                                                        <label for="" class="label-blue">unit of
+                                                                            measurement</label>
+                                                                        <select class="form-select">
+                                                                            <option selected></option>
+                                                                            <option value="1">One</option>
+                                                                            <option value="2">Two</option>
+                                                                            <option value="3">Three</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="py-3">
+                                                                        <label for="stock" class="label-blue">current
+                                                                            stock</label>
+                                                                        <input type="text" class="form-control">
+                                                                    </div>
+                                                                    <div class="py-3">
+                                                                        <label for="code" class="label-blue">HSN Code</label>
+                                                                        <input type="text" class="form-control">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-6">
+                                                                    <div class="py-3">
+                                                                        <label for="Iname" class="label-blue">Item name</label>
+                                                                        <input type="text" class="form-control">
+                                                                    </div>
+                                                                    <div class="py-3">
+                                                                        <label for="buy"
+                                                                            class="label-blue">Buy/Sell/Both</label>
+                                                                        <select class="form-select">
+                                                                            <option selected>Both</option>
+                                                                            <option value="1">sell</option>
+                                                                            <option value="2">buy</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="py-3">
+                                                                        <label for="itemCategory" class="label-blue">Item
+                                                                            category</label>
+                                                                        <select class="form-select">
+                                                                            <option selected></option>
+                                                                            <option value="1">1</option>
+                                                                            <option value="2">2</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="py-3">
+                                                                        <label for="Price" class="label-blue">Price</label>
+                                                                        <input type="text" class="form-control">
+                                                                    </div>
+                                                                    <div class="py-3">
+                                                                        <label for="tax" class="label-blue">tax</label>
+                                                                        <select class="form-select">
+                                                                            <option selected></option>
+                                                                            <option value="1">1</option>
+                                                                            <option value="2">2</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-success">Save</button>
+                                                        <button type="button" class="btn btn-success">Save & Add New</button>
+        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="invent_table">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered ">
+                                        <thead class="table-heading-blue">
+                                            <tr>
+                                                <th>Item id #</th>
+                                                <th>Item name</th>
+                                                <th>Item category</th>
+                                                <th style="width: 150px; min-width: 150px;">Current Stock</th>
+                                                <th style="width: 150px; min-width: 150px;">Unit</th>
+                                                <th style="width: 150px; min-width: 150px;">Price</th>
+                                                <th>Stock status</th>
+                                                <th>Product/Service</th>
+                                                <th>Type</th>
+                                                <th>HSN Code </th>
+                                                <th>Tax </th>
+                                                <th style="width: 150px; min-width: 150px;" ></th>
+                                                <th style="width: 150px; min-width: 150px;" >Max Stock Level</th>
+                                                <th style="width: 150px; min-width: 150px;" >Drawing Number</th>
+                                                <th style="width: 150px; min-width: 150px;" >Counter-party Code</th>
+            
+                                            </tr>
+                                        </thead>
+                                        <tr class="search">
+                                            <td><input type="text" placeholder="Search..."> </td>
+                                            <td><input type="text" placeholder="Search..."> </td>
+                                            <td><input type="text" placeholder="Search..."> </td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td><input type="text" placeholder="Search..."> </td>
+                                            <td></td>
+                                            <td><input type="text" placeholder="Search..."> </td>
+                                            <td><input type="text" placeholder="Search..."> </td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td><input type="text" placeholder="Search..."> </td>
+                                            <td><input type="text" placeholder="Search..."> </td>
+            
+            
+            
+                                        </tr>
+                                        <tbody class="table-data-purple">
+                                            <tr>
+                                                <td>sku00006</td>
+                                                <td class="d-flex justify-content-between text-primary">raw material <i
+                                                        class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                                                </td>
+                                                <td>-</td>
+                                                <td class="text-end text-primary">100 <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                </td>
+                                                <td>kg</td>
+                                                <td><i class="fa fa-inr" aria-hidden="true"></i>
+                                                    100.00</td>
+                                                <td>Min limit missing</td>
+                                                <td>Product</td>
+                                                <td>Buy</td>
+                                                <td>-</td>
+                                                <td>-</td>
+                                                <td style="text-align: right;">-</td>
+                                                <td style="text-align: right;">-</td>
+                                                <td>-</td>
+                                                <td>-</td>
+            
+            
+            
+                                            </tr>
+                                            <tr>
+                                                <td>sku00006</td>
+                                                <td class="d-flex justify-content-between text-primary">raw material <i
+                                                        class="fa fa-ellipsis-v" aria-hidden="true"></i></td>
+                                                <td>-</td>
+                                                <td class="text-end text-primary">100 <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                </td>
+                                                <td>kg</td>
+                                                an argument and returns a floating poin         <td>Min limit missing</td>
+                                                <td>Product</td>
+                                                <td>Buy</td>
+                                                <td>-</td>
+                                                <td>-</td>
+                                                <td style="text-align: right;">-</td>
+                                                <td style="text-align: right;">-</td>
+                                                <td>-</td>
+                                                <td>-</td>
+                                                
+            
+                                            </tr>
+                                            <tr>
+                                                <td>sku00006</td>
+                                                <td class="d-flex justify-content-between text-primary">raw material <i
+                                                        class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                                                </td>
+                                                <td>-</td>
+                                                <td class="text-end text-primary">100 <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                </td>
+                                                <td>kg</td>
+                                                <td><i class="fa fa-inr" aria-hidden="true"></i>
+                                                    200.00</td>
+                                                <td>Min limit missing</td>
+                                                <td>Product</td>
+                                                <td>Buy</td>
+                                                <td>-</td>
+                                                <td>-</td>
+                                                <td style="text-align: right;">-</td>
+                                                <td style="text-align: right;">-</td>
+                                                <td>-</td>
+                                                <td>-</td>
+            
+            
+                                            </tr>
+                                            <tr>
+                                                <td>sku00006</td>
+                                                <td class="d-flex justify-content-between text-primary">raw material <i
+                                                        class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                                                </td>
+                                                <td>-</td>
+                                                <td class="text-end text-primary">100 <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                </td>
+                                                <td>kg</td>
+                                                <td><i class="fa fa-inr" aria-hidden="true"></i>
+                                                    1000.00</td>
+                                                <td>Min limit missing</td>
+                                                <td>Product</td>
+                                                <td>Buy</td>
+                                                <td>-</td>
+                                                <td>-</td>
+                                                <td style="text-align: right;">-</td>
+                                                <td style="text-align: right;">-</td>
+                                                <td>-</td>
+                                                <td>-</td>
+            
+            
+                                            </tr>
+                                            <tr>
+                                                <td>sku00006</td>
+                                                <td class="d-flex justify-content-between text-primary">raw material <i
+                                                        class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                                                </td>
+                                                <td>-</td>
+                                                <td class="text-end text-primary">100 <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                </td>
+                                                <td>kg</td>
+                                                <td><i class="fa fa-inr" aria-hidden="true"></i>
+                                                    100.00</td>
+                                                <td>Min limit missing</td>
+                                                <td>Product</td>
+                                                <td>Buy</td>
+                                                <td>-</td>
+                                                <td>-</td>
+                                                <td style="text-align: right;">-</td>
+                                                <td style="text-align: right;">-</td>
+                                                <td>-</td>
+                                                <td>-</td>
+            
+            
+                                            </tr>
+                                            <tr>
+                                                <td>sku00006</td>
+                                                <td class="d-flex justify-content-between text-primary">raw material <i
+                                                        class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                                                </td>
+                                                <td>-</td>
+                                                <td class="text-end text-primary">100 <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                </td>
+                                                <td>kg</td>
+                                                <td><i class="fa fa-inr" aria-hidden="true"></i>
+                                                    100.00</td>
+                                                <td>Min limit missing</td>
+                                                <td>Product</td>
+                                                <td>Buy</td>
+                                                <td>-</td>
+                                                <td>-</td>
+                                                <td style="text-align: right;">-</td>
+                                                <td style="text-align: right;">-</td>
+                                                <td>-</td>
+                                                <td>-</td>
+            
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="d-flex align-items-center justify-content-between mt-3">
+                                    <div class="d-flex">
+                                        <p class="pagisition-para mb-0">Rows per page:</p>
+                                        <div class="fooet-pagination mx-4">
+                                            <p class="mb-0">50</p>
+                                            <div class="dropdown">
+                                                <button class=" dropdown-toggle dropdown-btn" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
+                                                </button>
+                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                                                    <li><button class="dropdown-item" type="button">1</button></li>
+                                                    <li><button class="dropdown-item" type="button">2</button></li>
+                                                    <li><button class="dropdown-item" type="button">3</button></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="pagisition-para mb-0">1-2 of 2</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        
+    <script>
+
+        jQuery('#btn-submit').on('click', function(){
+            let item_sku = jQuery("#item_sku").val();
+            var item_name = jQuery("#item_name").val();
+            let item_price = jQuery("#item_price").val();
+            let service_product = jQuery("#service_product").val();
+            let item_unit = jQuery("#unit").val();
+            let hsn_code = jQuery("#hsn_code").val();
+            let item_type = jQuery("#item_type").val();
+            let item_stock =  jQuery("#stock").val();
+            let item_category = jQuery("#category").val();
+            let item_tax = jQuery("#tax").val();
+            let item_rack = jQuery("#add-racks").val();
+            let item_warehouse = jQuery("#check_ware_house").val();
+            if(item_sku.length < 13){
+                jQuery("#error_message").text("SKU length should be equal to 13");
+                return false;
+            }
+            
+            if(item_category=="-------"){
+                jQuery("#error_message").text("Please select Category");
+                return false;
+            }
+            if(service_product=="Select Type"){
+                jQuery("#error_message").text("Please select Type");
+                return false;
+            }
+            if(item_unit=="Select Unit"){
+                console.log(item_type);
+                jQuery("#error_message").text("Please select Unit");
+                return false;
+            }
+            if(!jQuery.isNumeric(item_price)){
+                jQuery("#error_message").text("Add Number in Price");
+                return false;
+            }
+            if(item_rack =='-'){
+                jQuery("#error_message").text("Select Rack");
+                return false;
+            }
+            if(item_warehouse=='-'){
+
+                jQuery("#error_message").text("Select Warehouse");
+                return false;
+            }
+        });
+        jQuery(document).ready(function(){
+            jQuery(".item-delete").on("click",function(){
+                var itemid = jQuery(this).attr("data-delete-item-id");
+                jQuery(".delete_item_form").attr("action",`/inventory/delete-inventory-item/${itemid}`)
+            });
+            jQuery(".open_barcode").on("click", function(){
+                var img_url = jQuery(this).attr("data-item-barcode");
+                console.log(img_url);
+                jQuery(".barcode-img-url").attr("src",img_url);
+            });
+            
+        });
+
+        jQuery(".add-new-cat").on("change", function(){
+            var url = $(this).val();
+            console.log(url);
+            if(url == "/inventory/add-category"){
+                window.location = url;
+            }
+                
+        });
+        jQuery("#check_ware_house").on('change',function(e){
+            
+            var warehouse = jQuery("#check_ware_house option:selected").text();
+            page_url = "/inventory/get-warehouse-rack/"+warehouse
+            $.ajax({
+                type: 'GET',
+                url: page_url,
+                success: function (response) {            
+                    var rackk = response.racks
+                    console.log(rackk)
+                    jQuery(".add-racks").empty();
+                    for(let i = 0; i < rackk.length; i++){
+                        console.log(i)
+                        
+                        jQuery(".add-racks").append(`<option value="${rackk[i]}">${rackk[i]}</option>`);
+                    }
+                }
+            });
+        });  
+        
+        jQuery('.search-item').keypress(function (e) {
+            if (e.which == 13) {
+                jQuery('form#search-form').submit();
+                return false;
+            }
+        });
+
+        $("#scanAdnSearch").on("input", function(e){
+            let value = e.target.value
+            if(value.length > 10){
+                jQuery('form#search-scan-form').submit();
+                return true;
+            }               
+        });
+
+        jQuery(document).ready(function(){
+            function getUrlVars(){
+                var vars = [], hash;
+                var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+                for(var i = 0; i < hashes.length; i++)
+                {
+                    hash = hashes[i].split('=');
+                    vars.push(hash[0]);
+                    vars[hash[0]] = hash[1];
+                }
+                return vars;
+            }
+            
+
+            function check_search_val(){
+                let scan_search = getUrlVars()["search_by_id"]
+                if (scan_search !== undefined){
+                    jQuery('#scanAdnSearch').val(scan_search)
+                }
+
+                console.log(scan_search)
+            }
+            check_search_val()
+        
+    
+        });
+
+</script>
+
+{% endblock content %}

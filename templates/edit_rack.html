@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Inventory{% endblock %}
+{% block content %}
+<div class="wrapper">
+    <!-- Page Content  -->
+    <div id="content">
+        <h3 class="page_header mb-4">Edit Rack</h3>
+        <form method="post">
+            <p style="color: red;"id="error_message"></p>
+            {% csrf_token %}
+            Warehouse:<input type="text" id="new-warehouse" class="form-control add_single_field mb-3"  name="warehouse" value="{{rack_detail.warehouse.name}}">
+            Rack:<input type="text" id="edit_rack" class="form-control add_single_field mb-3" name="rack" value="{{rack_detail.rack}}">
+            <input type="submit" id="btn-submit" name="btn-category" class="btn btn-primary" value="Update" required>
+        </form>
+    </div>
+</div>
+<script>
+    jQuery('#btn-submit').on('click', function(){
+           var warehouse = jQuery("#new-warehouse").val();
+           var rackname = jQuery("#edit_rack").val();
+           
+           if(warehouse==""){
+               jQuery("#error_message").text("Please enter Warehouse");
+               return false;
+           }
+           if(rackname==""){
+               jQuery("#error_message").text("Please enter Rack");
+               return false;
+           }
+         
+       });
+</script>
+{% endblock content %}

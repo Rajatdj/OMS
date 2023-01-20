@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Dasboard{% endblock %}
+{% block content %}
+
+<div>
+    <!-- Page Content  -->
+    <div class="w-100">
+        <div class="dashboard-cards-container mb-4">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="dashboard-cards first_card">
+                        <span class="dash-count">{{total_item_count}}</span>
+                        <p class="dash-cards-title mb-0"><i class="fas fa-circle-check me-2"></i>Total Item</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="dashboard-cards second_card">
+                        <span class="dash-count">{{total_price}}</span>
+                        <p class="dash-cards-title mb-0"><i class="fas fa-circle-check me-2"></i></i>Total Price</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="dashboard-cards third_card">
+                        <span class="dash-count">{{total_stock}}</span>
+                        <p class="dash-cards-title mb-0"><i class="fas fa-circle-check me-2"></i>Total Stock</p>
+                    </div>
+                </div>
+                <!-- <div class="col-md-3">
+                    <div class="dashboard-cards forth_card">
+                        <span class="dash-count">4000</span>
+                        <p class="dash-cards-title mb-0"><i class="fas fa-circle-check me-2"></i>Total Completed</p>
+                    </div>
+                </div> -->
+            </div>
+        </div>
+        <div class="card card-height-100">
+            <div class="card-header align-items-center d-flex">
+                <h4 class="card-title mb-0 flex-grow-1">Account Details</h4>
+                <div class="flex-shrink-0">
+
+                </div>
+            </div>
+        
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-nowrap align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th scope="col" style="width: 20%;">First Name</th>
+                                <th scope="col" style="width: 20%;">Last Name</th>
+                                <th scope="col" style="width: 20%;">Email</th>
+                                <th scope="col" style="width: 20%;">Company</th>
+                                <th scope="col" style="width: 20%;">Company Number</th>
+                                <th scope="col" style="width: 20%;">Country</th>
+                                <th scope="col" style="width: 20%;">State</th>
+                                <th scope="col" style="width: 20%;">Region</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if user.is_superuser %}
+       
+                                {% for detail  in userdetails %}
+                                    <tr>
+                                        <td> {{ detail.user.first_name }}</td>
+                                        <td> {{ detail.user.last_name }}</td>
+                                        <td> {{ detail.user.email }}</td>
+                                        <td> {{ detail.company_name }}</td>
+                                        <td> {{ detail.contact_no }}</td>
+                                        <td> {{ detail.country }}</td>
+                                        <td> {{ detail.state }}</td>
+                                        <td> {{ detail.region }}</td>
+                
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
+                            <tr>
+                                <td> {{ userdetails.user.first_name }}</td>
+                                <td> {{ userdetails.user.last_name }}</td>
+                                <td> {{ userdetails.user.email }}</td>
+                                <td> {{ userdetails.company_name }}</td>
+                                <td> {{ userdetails.contact_no }}</td>
+                                <td> {{ userdetails.country }}</td>
+                                <td> {{ userdetails.state }}</td>
+                                <td> {{ userdetails.region }}</td>
+                            </tr>
+                            
+                        </tbody><!-- end tbody -->
+                    </table><!-- end table -->
+                </div><!-- end table responsive -->
+    </div>
+</div>
+<style>
+    .show-dropdown-links{
+        display: block!important;
+    }
+</style>
+<script>
+    jQuery("#dropdownMenuLink").on('click',function(){
+            jQuery(".dropdown-menu").toggleClass('show-dropdown-links');
+    });
+</script>
+{% endblock content %}
+   

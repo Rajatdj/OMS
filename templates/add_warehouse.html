@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Warehouse{% endblock %}
+{% block content %}
+<div class="">
+        <h3 class="page_header mb-4">Add New Warehouse</h3>
+        <form method="POST">
+            {% csrf_token %} 
+            Name:<input type="text" id="warehouse_name" class="form-control add_single_field mb-3" placeholder="Enter Warehouse" name="warehouse_name" required>
+            Address:<input type="text" id="warehouse_loc" class="form-control add_single_field mb-3" placeholder="Enter Address" name="warehouse_loc" required>
+            
+            <input type="submit" id="btn-submit" name="btn-category" class="btn btn-primary" value="Add Warehouse" required>
+        </form>
+        <div class="card-body">
+            <div class="table-responsive category_table">
+
+                <table class="table table-nowrap align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="width: 20%;">Sn.</th>
+                            <th scope="col" style="width: 20%;">Name</th>
+                            <th scope="col" style="width: 20%;">Location</th>
+                            <th scope="col" style="width: 20%;"> Actions </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for warehouse in warehouses %}
+                        <tr>
+                           
+                            <td> {{ forloop.counter }}</td>
+                            <td> {{ warehouse.name  }}</td>
+                            <td>{{ warehouse.address}}</td>
+                            <form method="POST">
+                                {% csrf_token %} 
+                            <td> <a href="{% url 'edit-warehouse' warehouse.id %}" class="me-2"><i class="fas fa-pencil-alt"></i></a><i class="fa-solid fa-trash fa-fw warehouse-delete text-danger" data-bs-toggle="modal"
+                                data-bs-target="#openmodaldelete" data-delete-warehouse-id="{{ warehouse.id }}"></i><input type="hidden" class="delete-warehouse" value="{{warehouse.id}}"></td>
+                            </form>
+                        </tr>
+                        {% endfor %}
+                    </tbody><!-- end tbody -->
+                </table><!-- end table -->
+            </div><!-- end table responsive -->
+            <div class="modal fade" id="openmodaldelete">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header bg-danger modal_header_del">
+                            <h5 class="m-0">Delete Entry</h5>
+                            <button type="button" class="modal_close_btn btn p-0" data-bs-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <form class="delete_item_form" method="post">
+                                {% csrf_token %}
+                                <div class="d-flex align-items-center mb-5 mt-3">
+                                    <img src="{% static '/img/warning_icon.gif' %}">
+                                    <h4 class="ms-3">Are you sure you want to delete?</h4>
+                                </div>
+                                <button type="submit" class="btn btn-danger btn-md">Confirm delete</button>
+                                <a href="{% url 'add-warehouse' %}"><button type="button" class="btn btn-default" data-bs-dismiss="modal">Cancel</button></a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .show-dropdown-links{
+        display: block!important;
+    }
+</style>
+<script>
+    jQuery(".warehouse-delete").on('click', function(){
+        var warehouse_id = jQuery(this).attr("data-delete-warehouse-id");
+        jQuery(".delete_item_form").attr("action",`/inventory/delete-warehouse/${warehouse_id}`)
+
+    });
+    jQuery("#dropdownMenuLink").on('click',function(){
+            jQuery(".dropdown-menu").toggleClass('show-dropdown-links');
+    });
+</script>
+{% endblock content %}
+   

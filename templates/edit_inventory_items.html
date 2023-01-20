@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Edit Item{% endblock %}
+{% block content %}
+
+<div>
+    <div class="w-100">
+           
+        <h3 class="page_header mb-4">Edit Inventory</h3>
+    <div class="item-master">
+        <div class="container-fluid">
+            <div class="tab-content">
+                <div class="tab-pane fade show active" >
+                    <div class="d-flex justify-content-between inventory">
+                        <div class="d-flex">
+                            <i class="fa fa-archive" aria-hidden="true"></i>
+                            <span class="ps-2">
+                                <h6 class="m-0">inventory</h6>
+                                <p class="m-0">Item master</p>
+                            </span>
+                        </div>
+                    </div>
+                    <div class=" sub-heading shadow mb-4 rounded text-center encrypted_header">
+                        <i class="fa fa-shield" aria-hidden="true"></i>
+                        encrypted action
+                    </div>
+                    <div class="items-content">
+                        <!-- edit item Header -->
+                        <div class="items-header bg-warning">
+                            <h4 class="items-title mb-0">Edit item</h4>
+                        </div>
+                    <form method="POST">
+                        <!-- edit item body -->
+                        <div class="items-body">
+                            <p style="color:red;" id="error_message"></p>
+                                {% csrf_token %}
+                                <div class="row">
+                                    {% for detail in item_detail %}
+                                    <div class="col-md-6">
+                                    
+                                        <div class="py-md-3 pt-0 pb-3">
+                                            <label for="item" class="label-blue">Item Id</label>
+                                            <input type="text" id="item_sku" name="item_sku" value="{{ detail.sku }}" class="form-control add_single_field" id="item_sku">
+                                        </div>
+                                        <div class="py-md-3 pt-0 pb-3">
+                                            <label for="ProductService"
+                                                class="label-blue">Product/Service</label>
+                                                <select class="form-select add_single_field" name="service_product" id="service_product">
+                                                    {% if detail.product_or_service %}
+                                                    <option value="{{ detail.product_or_service }}" selected>{{ detail.product_or_service }}</option>
+                                                        {% if detail.product_or_service == "service"%}
+                                                        <option value="product">Product</option>
+                                                        {% else%}
+                                                        <option value="service">Service</option>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                </select>
+                                        </div>
+                                        <div class="py-md-3 pt-0 pb-3">
+                                            <label for="unit" class="label-blue">Unit Uf
+                                                Measurement</label>
+                                                <select class="form-select add_single_field" id="unit" name="unit">
+                                                    {% if detail.unit_of_measurement %}
+                                                    <option value="{{detail.unit_of_measurement}}"selected>{{detail.unit_of_measurement}}</option>
+                                                        {% if detail.unit_of_measurement == "Kg"%}
+                                                            <option value="M">M</option>
+                                                        {% else %}
+                                                            <option value="Kg">Kg</option>
+                                                        {% endif %}
+                                                    {% else %}
+                                                        <option selected>Select Unit</option>
+                                                        <option value="M">M</option>
+                                                        <option value="Kg">Kg</option>
+                                                    {% endif %}
+                                                    
+                                                </select>
+                                        </div>
+                                        <div class="py-md-3 pt-0 pb-3">
+                                            <label for="stock" class="label-blue">Current
+                                                Stock</label>
+                                                <input type="text" name="stock" value="{{ detail.stock }}" id="stock" class="form-control add_single_field">
+                                            </div>
+                                        <div class="py-md-3 pt-0 pb-3">
+                                            <label for="code" class="label-blue">HSN Code</label>
+                                            <input type="text" name="hsn_code" value="{{ detail.hsn_code }}" id="hsn_code" class="form-control add_single_field">
+                                        </div>
+                                        <div class="py-md-3 pt-0 pb-3">
+                                            <label for="code" class="label-blue">Warehouse</label>
+                                            <select class="form-select add_single_field" id="ware_house" name="ware_house">
+                                                {% if detail.warehouse %}
+                                                    <option value="{{ detail.warehouse }}"selected>{{ detail.warehouse }}</option>
+                                
+                                                {% endif %}
+                                                    {% for ware in warehouses %}
+                                                        {% if ware.name == detail.warehouse %}
+                                                            <p>--</p>
+                                                            {% else %}
+                                                                <option value="{{ ware.name }}">{{ware.name}}</option>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="py-md-3 pt-0 pb-3">
+                                            <label for="Iname" class="label-blue">Item name</label>
+                                            <input type="text" id="item_name" value="{{ detail.item_name }}" name="item_name" class="form-control add_single_field">
+                                        </div>
+                                        <div class="py-md-3 pt-0 pb-3">
+                                            <label for="buy"
+                                                class="label-blue">Buy/Sell/Both</label>
+                                                <select class="form-select add_single_field" id="item_type" name="item_type">
+                                                    {% if detail.type %}
+                                                        <option value="{{ detail.type }}"selected>{{ detail.type }}</option>
+                                                        {% if detail.type == "Sell" %}
+                                                            <option value="Buy">Buy</option>
+                                                            <option value="Both"selected>Both</option>
+                                                        {% elif detail.type == "buy" %}
+                                                            <option value="Sell">Sell</option>
+                                                            <option value="Both"selected>Both</option>
+                                                        {% else %}
+                                                            <option value="Sell">Sell</option>
+                                                            <option value="Buy">Buy</option>
+                                                        {% endif %}
+                                                        
+                                                    {% endif %}
+                                                    
+                                                </select>
+                                        </div>
+                                        <div class="py-md-3 pt-0 pb-3">
+                                            <label for="itemCategory" class="label-blue">Item
+                                                Category</label>
+                                                <select class="form-select add_single_field" name="category">
+                                                    {% if detail.item_category %}
+                                                        <option value="{{ detail.item_category.id }}" selected>{{ detail.item_category }}</option>
+                                                    {% endif%}
+                                                  
+                                                    {% for category in categories %}
+                                                        {% if category.id == detail.item_category.id %}
+                                                        <p>--</p>
+                                                        {% else %}
+                                                            <option value="{{category.id}}">{{category.name}}</option>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </select>
+                                        </div>
+                                        <div class="py-md-3 pt-0 pb-3">
+                                            <label for="Price" class="label-blue">Price</label>
+                                            <input type="text" name="item_price" value="{{ detail.price }}"id="item_price" class="form-control add_single_field">
+                                        </div>
+                                        <div class="py-md-3 pt-0 pb-3">
+                                            <label for="tax" class="label-blue">Tax</label>
+                                            <input type="text" name="tax" id="tax" value="{{ detail.tax }}" class="form-control add_single_field">
+
+                                        </div>
+                                        <div class="py-md-3 pt-0 pb-3">
+                                            <label for="itemCategory" class="label-blue">Rack</label>
+                                                <select class="form-select add_single_field" name="rack">
+                                                    {% if detail.racks %}
+                                                        <option value="{{detail.rack}}">{{detail.racks}}</option>
+                                                    {% endif %}
+                                                    {% for rack in all_racks %}
+                                                        {% if rack.rack != detail.racks %}
+                                                            <option value="{{rack.rack}}">{{rack.rack}}</option>
+
+                                                        {%endif%}
+                                                    {% endfor %}
+                                                </select>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                           
+                        </div>
+                        <div class="itmes-footer">
+                            <a href="{% url 'add-single-inventory-item'%}"><button type="button" class="btn btn-danger">Cancel</button></a>
+                            <input type="submit" id="btn-submit" class="btn btn-success mx-2" value="Save">
+                        </div>
+                    </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+    <script>
+         jQuery('#btn-submit').on('click', function(){
+                let item_sku = jQuery("#item_sku").val();
+                var item_name = jQuery("#item_name").val();
+                let item_price = jQuery("#item_price").val();
+                let service_product = jQuery("#service_product").val();
+                let item_unit = jQuery("#unit").val();
+                let hsn_code = jQuery("#hsn_code").val();
+                let item_type = jQuery("#item_type").val();
+                let item_stock =  jQuery("#stock").val();
+                let item_category = jQuery("#category").val();
+                let item_tax = jQuery("#tax").val();
+                if(item_sku==" "){
+                    jQuery("#error_message").text("Field can not be empty");
+                    return false;
+                }
+                if(item_sku.length < 12){
+                    jQuery("#error_message").text("SKU length should be greater than or equal to 12");
+                    return false;
+                }
+                
+                if(service_product=="Select Type"){
+                    jQuery("#error_message").text("Please select Type");
+                    return false;
+                }
+                if(item_unit=="Select Unit"){
+                    console.log(item_type);
+                    jQuery("#error_message").text("Please select Unit");
+                    return false;
+                }
+                if(!jQuery.isNumeric(item_price)){
+                    jQuery("#error_message").text("Add Number in Price");
+                    return false;
+                }
+            });
+    </script>
+{% endblock content %}

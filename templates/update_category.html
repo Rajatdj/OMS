@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Inventory{% endblock %}
+{% block content %}
+<div class="wrapper">
+    <!-- Sidebar  -->
+    <!-- <nav id="sidebar" class="sidbar">
+        <img class="" src="{% static '/img/tech-logo.png' %}">
+        <button class="close_sidebar">&times;</button>
+          <ul class="list-unstyled components">
+              <li class="active home">
+                  <a  href="{% url 'dashboard' %} " aria-expanded="false" class="home-heading">Dashboard</a>
+              </li> 
+              <li class=" home">
+                  <a  href="{% url 'add-single-inventory-item' %}"  aria-expanded="false" class="home-heading">Inventory</a>
+              </li>
+              <li class=" home">
+                  <a  href="{% url 'add-category' %}"  aria-expanded="false" class="home-heading">Categories</a>
+              </li>
+              <li class=" home">
+                  <a  href="{% url 'add-single-inventory-item' %}"  aria-expanded="false" class="home-heading">Warehouses</a>
+              </li>
+          </ul>
+      </nav> -->
+
+    <!-- Page Content  -->
+    <div id="content">
+        <!-- <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+
+                <button type="button" id="sidebarCollapse" class="btn text-sidebar bg-turbo-yellow">
+                    <i class="fas fa-align-left"></i>
+                    
+                </button>
+                <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fas fa-align-justify"></i>
+                </button>
+
+                <div class="collapse navbar-collapse navbar_menu justify-content-between" id="navbarSupportedContent">
+                    <div class="nav navbar-nav ml-auto">
+                        
+                    </div>
+                    <div class="header-profile">
+                        <div class="dropdown">
+                          <lord-icon
+                              src="https://cdn.lordicon.com/gelfkkek.json"
+                              trigger="hover"
+                              style="width:35px;height:35px" >
+                          </lord-icon>
+                            <i class="fa-solid fa-user profile-icon"></i>
+                            <a class="dropdown-button dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                {{ user }}
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                <p class="dropdown-para">Welcome Annal</p>
+                              <li><a class="dropdown-text" href="#"><i class="fa-solid fa-user profile-icons"></i>profile</a></li>
+                              <li><a class="dropdown-text" href="{% url 'logout'%}"><i class="fa-solid fa-arrow-right-from-bracket profile-icons"></i>Logout</a></li>
+                            </ul>
+                          </div>
+                    </div>
+                </div>
+            </div>
+        </nav> -->
+        <h3 class="page_header mb-4">Edit Category</h3>
+        <form method="post">
+            <p style="color: red;"id="error_message"></p>
+            {% csrf_token %}
+            {% for category in update_category %}
+            Name:<input type="text" id="new-category" class="form-control add_single_field mb-3"  name="category" value="{{category.name}}">
+            Description:<input type="text" id="category_description" class="form-control add_single_field mb-3" name="description" value="{{category.description}}">
+            <input type="submit" id="btn-submit" name="btn-category" class="btn btn-primary" value="Update" required>
+            {% endfor %}
+        </form>
+    </div>
+</div>
+<script>
+    jQuery('#btn-submit').on('click', function(){
+           var category = jQuery("#new-category").val();
+           var description = jQuery("#category_description").val();
+           
+           if(category==""){
+               jQuery("#error_message").text("Please enter category");
+               return false;
+           }
+           if(description==""){
+               jQuery("#error_message").text("Please enter description");
+               return false;
+           }
+         
+       });
+</script>
+{% endblock content %}

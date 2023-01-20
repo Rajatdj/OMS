@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Inventory{% endblock %}
+{% block content %}
+<div class="wrapper">
+    <!-- Sidebar  -->
+ 
+
+    <!-- Page Content  -->
+    <div id="content">
+        <h3 class="page_header mb-4">Edit Warehouse</h3>
+        <form method="post">
+            <p style="color: red;"id="error_message"></p>
+            {% csrf_token %}
+            {% for warehouse in warehouse_detail %}
+            Name:<input type="text" id="new-category" class="form-control add_single_field mb-3"  name="warehouse" value="{{warehouse.name}}">
+            Description:<input type="text" id="category_description" class="form-control add_single_field mb-3" name="address" value="{{warehouse.address}}">
+            <input type="submit" id="btn-submit" name="btn-category" class="btn btn-primary" value="Update" required>
+            {% endfor %}
+        </form>
+    </div>
+</div>
+<script>
+    jQuery('#btn-submit').on('click', function(){
+           var category = jQuery("#new-category").val();
+           var description = jQuery("#category_description").val();
+           
+           if(category==""){
+               jQuery("#error_message").text("Please enter Warehouse");
+               return false;
+           }
+           if(description==""){
+               jQuery("#error_message").text("Please enter description");
+               return false;
+           }
+         
+       });
+</script>
+{% endblock content %}
